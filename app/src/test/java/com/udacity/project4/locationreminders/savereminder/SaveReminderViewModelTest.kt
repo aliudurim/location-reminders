@@ -3,92 +3,57 @@ package com.udacity.project4.locationreminders.savereminder
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.udacity.project4.locationreminders.MainCoroutineRule
+import com.udacity.project4.R
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
-import com.udacity.project4.locationreminders.getOrAwaitValue
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.assertThat
+import org.hamcrest.MatcherAssert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.MockitoAnnotations
+import org.koin.core.context.stopKoin
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class SaveReminderViewModelTest {
 
-        @get:Rule
-        var instantExecutorRule = InstantTaskExecutorRule()
+    private lateinit var viewModel: SaveReminderViewModel
+    private lateinit var dataSource: FakeDataSource
+
+    private val reminder1 = ReminderDataItem("Reminder1", "Description1", "Location1", 10.0, 10.0)
+    private val reminderNullTitle = ReminderDataItem(null, "Description2", "location2", 20.0, 20.0)
+    private val reminderEmptyTitle = ReminderDataItem("", "Description2", "location2", 20.0, 20.0)
+    private val remindersList = mutableListOf<ReminderDTO>()
 
     @get:Rule
-    var mainCoroutineRule = MainCoroutineRule()
-
-    private lateinit var testFakeDataSource: FakeDataSource
+    var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
-    fun setupFakeDataSource() {
-        MockitoAnnotations.initMocks(this)
-        testFakeDataSource = FakeDataSource()
+    fun setUpViewModel() {
+        dataSource = FakeDataSource(remindersList)
+        viewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), dataSource)
+        stopKoin()
     }
-
 
     @Test
-    fun validatedata_incompletedata_return()= mainCoroutineRule.runBlockingTest{
-
-        // Given a fresh TasksViewModel
-        val saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), FakeDataSource())
-        val reminderItem=ReminderDataItem(
-            "",
-            "Description",
-            "Location",
-            0.0,
-            0.0
-        )
-
-        // When adding a new task
-        val test= saveReminderViewModel.validateEnteredData(reminderItem)
-
-        // Then the new task event is triggered
-        assertThat(test, `is`(false))
-
+    fun addNewReminder_savesNewReminder() {
+        viewModel.validateAndSaveReminder(reminder1)
+        MatcherAssert.assertThat(viewModel.showToast.value, `is`("Reminder Saved !"))
     }
 
-//    @Test
-//    fun saveReminder_RemindersSaved()= mainCoroutineRule.runBlockingTest{
-//
-//        // Given a fresh TasksViewModel
-//        val saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), testFakeDataSource)
-//        val reminderItem= ReminderDTO(
-//            "Title",
-//            "Description",
-//            "Location",
-//            0.0,
-//            0.0
-//        )
-//
-//
-//        // When adding a new task
-//
-//        testFakeDataSource.saveReminder(reminderItem)
-//        mainCoroutineRule.dispatcher.pauseDispatcher()
-//        //livedata testing
-//        val latitudeitem =saveReminderViewModel.latitude.getOrAwaitValue()
-//        val longitudeitem = saveReminderViewModel.longitude.getOrAwaitValue()
-//        val reminderTitleitem = saveReminderViewModel.reminderTitle.getOrAwaitValue()
-//        val reminderDescriptionitem = saveReminderViewModel.reminderDescription.getOrAwaitValue()
-//        // Then the new task event is triggered
-//        mainCoroutineRule.resumeDispatcher()
-//
-//        assertThat(latitudeitem, `is`(reminderItem.latitude))
+    @Test
+    fun addNewReminderNullTitle_producesErrorTitle() {
+        viewModel.validateAndSaveReminder(reminderNullTitle)
+        MatcherAssert.assertThat(viewModel.showSnackBarInt.value, `is`(R.string.err_enter_title))
+    }
 
-
-
-
+    @Test
+    fun addNewReminderEmptyTitle_producesErrorTitle() {
+        viewModel.validateAndSaveReminder(reminderEmptyTitle)
+        MatcherAssert.assertThat(viewModel.showSnackBarInt.value, `is`(R.string.err_enter_title))
+    }
 }
