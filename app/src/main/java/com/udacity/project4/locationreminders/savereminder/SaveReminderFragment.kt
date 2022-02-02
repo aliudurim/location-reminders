@@ -237,7 +237,7 @@ class SaveReminderFragment : BaseFragment() {
                     .setAction(R.string.settings) {
                         startActivity(Intent().apply {
                             action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                            data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                            data = Uri.fromParts("package", com.udacity.project4.BuildConfig.APPLICATION_ID, null)
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         })
                     }.show()

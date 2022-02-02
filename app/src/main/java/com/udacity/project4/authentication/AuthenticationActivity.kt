@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.firebase.ui.auth.AuthUI
@@ -15,7 +14,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.udacity.project4.R
 import com.udacity.project4.databinding.ActivityAuthenticationBinding
 import com.udacity.project4.locationreminders.RemindersActivity
-import kotlinx.android.synthetic.main.activity_authentication.*
 
 /**
  * This class should be the starting point of the app, It asks the users to sign in / register, and redirects the

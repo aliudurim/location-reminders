@@ -38,7 +38,6 @@ import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import org.koin.android.ext.android.inject
 
 
-
 class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     //Use Koin to get the view model of the SaveReminder
@@ -80,7 +79,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
 
-
     override fun onMapReady(googleMap: GoogleMap) {
 
 
@@ -94,7 +92,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
         val zoomLevel = 15f
         val googleplex = LatLng(37.422131, -122.084801)
-          map1.animateCamera(CameraUpdateFactory.newLatLngZoom(googleplex, zoomLevel))
+        map1.animateCamera(CameraUpdateFactory.newLatLngZoom(googleplex, zoomLevel))
 
     }
 
@@ -134,8 +132,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private fun enableMyLocation() {
 
         when {
-            (ActivityCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) -> {
+            (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED) -> {
                 map1.isMyLocationEnabled = true
             }
             (ActivityCompat.shouldShowRequestPermissionRationale(
@@ -150,8 +150,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             else ->
                 requestPermissions(
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    REQUEST_LOCATION_PERMISSION)
-        } }
+                    REQUEST_LOCATION_PERMISSION
+                )
+        }
+    }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         //  Change the map type based on the user's selection.
@@ -200,11 +202,12 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             onLocationSelected()
         }
     }
-    
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray) {
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
@@ -223,12 +226,16 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                         .setAction(R.string.settings) {
                             startActivity(Intent().apply {
                                 action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                                data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                                data = Uri.fromParts(
+                                    "package",
+                                    com.udacity.project4.BuildConfig.APPLICATION_ID,
+                                    null
+                                )
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                         }.show()
                 }
-
-
-            } } }
+            }
+        }
+    }
 }
